@@ -230,7 +230,7 @@ ggplot(data = test) +
 #SVM time
 #model <- svm(Playoffs ~ EWATot + SalTot, data = train, type = "C-classification", kernel = 'polynomial')
 #preds <- predict(model, test)
-m <- svm(EWATot ~ SalTot, data  = train, cost = .1, gamma = 1, type = "C-classification", kernel = 'polynomial')
+#m <- svm(EWATot ~ SalTot, data  = train, cost = .1, gamma = 1, type = "C-classification", kernel = 'polynomial')
 model <- svm(train$EWATot + train$SalTot, train$Playoffs, cost = .1, gamma = 1, type = "C-classification", kernel = 'polynomial')
 preds <- predict(model, test$EWATot + test$SalTot)
 table(preds)
@@ -265,6 +265,8 @@ fit <- ksvm(Playoffs ~ .,data = train,kernel = "rbfdot", type = "C-svc")
 
 #KSVAM section that works
 #Scale the data for accurate svm results
+ktrain<-train
+ktest<-test
 ktrain$scaleSalTot <- scale(ktrain$SalTot)
 ktrain$scaleEWATot <- scale(ktrain$EWATot)
 ktest$scaleEWATot <- scale(ktest$EWATot)
