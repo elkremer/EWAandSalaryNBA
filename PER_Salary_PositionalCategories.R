@@ -24,7 +24,7 @@ filterStatData <- function (stats) {
 #team data is passed in as the x argument and the dataframe to be modified is
 #passed in as the y parameter
 createDataForSVM <- function(x,y) {
-  TOT = 29 #Index of the team name 'TOT'
+  #TOT = 29 #Index of the team name 'TOT'
   
   #Create the variables for needed for SVM
   WCTot <- as.vector(tapply(x$wincost, x$Tm, sum)) #The aggregate of wincost per team
@@ -32,9 +32,9 @@ createDataForSVM <- function(x,y) {
   SalTot <- as.vector(tapply(x$Salary, x$Tm, sum)) #The aggregate of Salary per team
   
   #Remove pesky 'TOT' Team value
-  WCTot <- WCTot[-TOT]
-  EWATot <- EWATot[-TOT]
-  SalTot <- SalTot[-TOT]
+  #WCTot <- WCTot[-TOT]
+  #EWATot <- EWATot[-TOT]
+  #SalTot <- SalTot[-TOT]
   
   #Add the new columns to the dataframe
   y$WCTot <- WCTot
