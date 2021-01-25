@@ -230,7 +230,12 @@ ggplot(data = test) +
 #SVM time
 #model <- svm(Playoffs ~ EWATot + SalTot, data = train, type = "C-classification", kernel = 'polynomial')
 #preds <- predict(model, test)
-m <- svm(EWATot ~ SalTot, data  = train, cost = .1, gamma = 1, type = "C-classification", kernel = 'polynomial')
+m <- svm(Playoffs ~ EWATot + SalTot, data  = train, cost = 1, gamma = 1, type = "C-classification", kernel = 'polynomial')
+ps <- predict(m, test)
+test$preds <- ps
+results <- confusionMatrix(data = test$preds, reference = test$Playoffs, positive = '1')
+print(results)
+
 model <- svm(train$EWATot + train$SalTot, train$Playoffs, cost = .1, gamma = 1, type = "C-classification", kernel = 'polynomial')
 preds <- predict(model, test$EWATot + test$SalTot)
 table(preds)
@@ -243,25 +248,6 @@ print(results)
 ggplot(data = test) +
   geom_point(mapping = aes(x = SalTot / 1000000, y = EWATot, color = Playoffs, shape = preds)) +
   labs(title = "Team EWA vs. Team Salary with Playoffs and Predictions", x = "Team Salary in Millions US$", y = "Cummulative Team EWA")
-
-
-grid <- expand.grid(seq(min(test[, 3]), max(test[, 3]),length.out=30),                                                                                                         
-                    seq(min(test[, 4]), max(test[, 4]),length.out=30))
-
-names(grid) <- names(test)[3:4]
-preds2 <- predict(model, grid)
-df <- data.frame(grid, preds)
-cols <- c('1' = 'red', '-1' = 'black')
-tiles <- c('1' = 'magenta', '-1' = 'cyan')
-shapes <- c('support' = 4, 'notsupport' = 1)
-ggplot(test, aes(x = test$SalTot, y = test$EWATot)) + geom_tile(aes(fill = preds)) + 
-  scale_fill_manual(values = tiles) +
-  geom_point(data = test, aes(color = y, shape = preds), size = 2) +
-  scale_color_manual(values = cols) 
-  #scale_shape_manual(values = shapes)
-obj <- tune.svm(train$EWATot + train$SalTot, train$Playoffs, type = "C-classification", kernel = 'sigmoid', cost = c(.1,.2,.4,1,2))
-#fit <- ksvm(EWATot~SalTot,data = train,kernel = "tanhdot", type = "C-svc")
-fit <- ksvm(Playoffs ~ .,data = train,kernel = "rbfdot", type = "C-svc")
 
 #KSVAM section that works
 #Scale the data for accurate svm results
@@ -276,4 +262,20 @@ ktest$preds <- predict(fit, ktest)
 confusionMatrix(data = ktest$preds, reference = ktest$Playoffs, positive = '1')
 plot(fit, data = ktest)
 
-#plot(SV,pch=19,main="Locations of the support vectors")
+#Need to work out Bugs below
+#grid <- expand.grid(seq(min(test[, 3]), max(test[, 3]),length.out=30),                                                                                                         
+#                    seq(min(test[, 4]), max(test[, 4]),length.out=30))
+
+#names(grid) <- names(test)[3:4]
+#preds2 <- predict(model, grid)
+#df <- data.frame(grid, preds)
+#cols <- c('1' = 'red', '-1' = 'black')
+#tiles <- c('1' = 'magenta', '-1' = 'cyan')
+#shapes <- c('support' = 4, 'notsupport' = 1)
+#ggplot(test, aes(x = test$SalTot, y = test$EWATot)) + geom_tile(aes(fill = preds)) + 
+#  scale_fill_manual(values = tiles) +
+#  geom_point(data = test, aes(color = y, shape = preds), size = 2) +
+#  scale_color_manual(values = cols) 
+  #scale_shape_manual(values = shapes)
+#obj <- tune.svm(train$EWATot + train$SalTot, train$Playoffs, type = "C-classification", kernel = 'sigmoid', cost = c(.1,.2,.4,1,2))
+#fit <- ksvm(EWATot~SalTot,data = train,kernel = "tanhdot", type = "C-svc")
